@@ -1,0 +1,13 @@
+<div class="payment-callback">
+    @if (loading) {
+    <p>Đang xử lý thanh toán...</p>
+    }
+
+    @if (!loading && paymentSuccess) {
+    <p>Thanh toán thành công!</p>
+    }
+
+    @if (!loading && !paymentSuccess) {
+    <p>Thanh toán thất bại. Vui lòng thử lại.</p>
+    }
+</div>
