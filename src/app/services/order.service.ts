@@ -55,4 +55,10 @@ export class OrderService {
     const params = new HttpParams().set('status', status); // Thêm tham số status vào query params
     return this.http.put<ApiResponse>(url, null, { params }); // Gửi yêu cầu PUT với tham số status
   }
+
+  // Get orders by user ID
+  getOrdersByUserId(userId: number): Observable<ApiResponse> {
+    const url = `${environment.apiBaseUrl}/orders/user/${userId}`;
+    return this.http.get<ApiResponse>(url);
+  }
 }

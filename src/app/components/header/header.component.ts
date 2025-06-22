@@ -29,12 +29,14 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     event.preventDefault();
     this.isPopoverOpen = !this.isPopoverOpen;
   }
-
   handleItemClick(index: number): void {
     //console.error(`Clicked on "${index}"`);
     if (index === 0) {
       debugger
       this.router.navigate(['/user-profile']);
+    }else if (index === 1) {
+      debugger
+      this.router.navigate(['/my-orders']);
     } else if (index === 2) {
       this.userService.removeUserFromLocalStorage();
       this.tokenService.removeToken();

@@ -16,6 +16,7 @@ import { AdminGuardFn } from './guards/admin.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 //import { OrderAdminComponent } from './components/admin/order/order.admin.component';
 import { PaymentCallbackComponent } from './payment-callback/payment-callback.component';
+import { OrdersUserComponent } from './orders-user/orders-user.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'products/:id', component: DetailProductComponent },  
   { path: 'orders', component: OrderComponent, canActivate:[AuthGuardFn] },
+  { path: 'my-orders', component: OrdersUserComponent, canActivate:[AuthGuardFn] },
   { path: 'user-profile', component: UserProfileComponent, canActivate:[AuthGuardFn] },
   { path: 'orders/:id', component: OrderDetailComponent },
   //Admin   
