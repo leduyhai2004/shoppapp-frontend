@@ -11,16 +11,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../../../base/base.component';
 
 @Component({
-    selector: 'app-detail.product.admin',
-    templateUrl: './update.product.admin.component.html',
-    styleUrls: ['./update.product.admin.component.scss'],
-    imports: [
-        CommonModule,
-        FormsModule,
-    ]
+  selector: 'app-detail.product.admin',
+  templateUrl: './update.product.admin.component.html',
+  styleUrls: ['./update.product.admin.component.scss'],
+  imports: [
+    CommonModule,
+    FormsModule,
+  ]
 })
 
-export class UpdateProductAdminComponent extends BaseComponent implements OnInit {  
+export class UpdateProductAdminComponent extends BaseComponent implements OnInit {
   categories: Category[] = []; // Dữ liệu động từ categoryService
   currentImageIndex: number = 0;
   images: File[] = [];
@@ -38,11 +38,11 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
   getCategories(page: number, limit: number) {
     this.categoryService.getCategories(page, limit).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger;
+
         this.categories = apiResponse.data;
       },
       complete: () => {
-        debugger;
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -58,13 +58,13 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
       next: (apiResponse: ApiResponse) => {
 
         this.product = apiResponse.data;
-        this.updatedProduct = { ...apiResponse.data };                
-        this.updatedProduct.product_images.forEach((product_image:ProductImage) => {
+        this.updatedProduct = { ...apiResponse.data };
+        this.updatedProduct.product_images.forEach((product_image: ProductImage) => {
           product_image.image_url = `${environment.apiBaseUrl}/products/images/${product_image.image_url}`;
         });
       },
       complete: () => {
-        
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -73,7 +73,7 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
           title: 'Lỗi Hệ Thống'
         });
       }
-    });     
+    });
   }
   updateProduct() {
     // Implement your update logic here
@@ -84,12 +84,12 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
       category_id: this.updatedProduct.category_id
     };
     this.productService.updateProduct(this.product.id, updateProductDTO).subscribe({
-      next: (apiResponse: ApiResponse) => {  
-        debugger        
+      next: (apiResponse: ApiResponse) => {
+
       },
       complete: () => {
-        debugger;
-        this.router.navigate(['/admin/products']);        
+
+        this.router.navigate(['/admin/products']);
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -98,36 +98,36 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
           title: 'Lỗi Cập Nhật'
         });
       }
-    });  
+    });
   }
   showImage(index: number): void {
-    debugger
-    if (this.product && this.product.product_images && 
-        this.product.product_images.length > 0) {
+
+    if (this.product && this.product.product_images &&
+      this.product.product_images.length > 0) {
       // Đảm bảo index nằm trong khoảng hợp lệ        
       if (index < 0) {
         index = 0;
       } else if (index >= this.product.product_images.length) {
         index = this.product.product_images.length - 1;
-      }        
+      }
       // Gán index hiện tại và cập nhật ảnh hiển thị
       this.currentImageIndex = index;
     }
   }
   thumbnailClick(index: number) {
-    debugger
+
     // Gọi khi một thumbnail được bấm
     this.currentImageIndex = index; // Cập nhật currentImageIndex
-  }  
+  }
   nextImage(): void {
-    debugger
+
     this.showImage(this.currentImageIndex + 1);
   }
 
   previousImage(): void {
-    debugger
+
     this.showImage(this.currentImageIndex - 1);
-  }  
+  }
   onFileChange(event: any) {
     // Retrieve selected files from input element
     const files = event.target.files;
@@ -140,12 +140,12 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
     this.images = files;
     this.productService.uploadImages(this.productId, this.images).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger
+
         // Handle the uploaded images response if needed              
         console.log('Images uploaded successfully:', apiResponse);
-        this.images = [];       
+        this.images = [];
         // Reload product details to reflect the new images
-        this.getProductDetails(); 
+        this.getProductDetails();
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -160,9 +160,9 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
     if (confirm('Are you sure you want to remove this image?')) {
       // Call the removeImage() method to remove the image   
       this.productService.deleteProductImage(productImage.id).subscribe({
-        next:(productImage: ProductImage) => {
-          location.reload();          
-        },        
+        next: (productImage: ProductImage) => {
+          location.reload();
+        },
         error: (error: HttpErrorResponse) => {
           this.toastService.showToast({
             error: error,
@@ -171,6 +171,6 @@ export class UpdateProductAdminComponent extends BaseComponent implements OnInit
           });
         }
       });
-    }   
+    }
   }
 }

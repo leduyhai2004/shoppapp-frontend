@@ -1,41 +1,41 @@
 import { Component, OnInit } from '@angular/core';
 import { UserResponse } from '../../responses/user/user.response';
-import {RouterModule} from "@angular/router";
+import { RouterModule } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from '../base/base.component';
 
 @Component({
-    selector: 'app-admin',
-    templateUrl: './admin.component.html',
-    styleUrls: [
-        './admin.component.scss',
-    ],
-    imports: [
-        CommonModule,
-        RouterModule,
-        //FormsModule
-    ]
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: [
+    './admin.component.scss',
+  ],
+  imports: [
+    CommonModule,
+    RouterModule,
+    //FormsModule
+  ]
 })
 export class AdminComponent extends BaseComponent implements OnInit {
   //adminComponent: string = 'orders';
-  userResponse?:UserResponse | null;  
-    
+  userResponse?: UserResponse | null;
+
   ngOnInit() {
-    this.userResponse = this.userService.getUserResponseFromLocalStorage();    
+    this.userResponse = this.userService.getUserResponseFromLocalStorage();
     // Default router
-    debugger
+
     if (this.router.url === '/admin') {
       this.router.navigate(['/admin/orders']);
     }
-   }  
+  }
   logout() {
     this.userService.removeUserFromLocalStorage();
     this.tokenService.removeToken();
-    this.userResponse = this.userService.getUserResponseFromLocalStorage();    
+    this.userResponse = this.userService.getUserResponseFromLocalStorage();
     this.router.navigate(['/']);
   }
   showAdminComponent(componentName: string): void {
-    debugger
+
     if (componentName === 'orders') {
       this.router.navigate(['/admin/orders']);
     } else if (componentName === 'categories') {

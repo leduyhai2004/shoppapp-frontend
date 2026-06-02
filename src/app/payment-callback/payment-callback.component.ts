@@ -15,10 +15,10 @@ export class PaymentCallbackComponent extends BaseComponent implements OnInit { 
   ngOnInit(): void {
     // Sử dụng this.activatedRoute từ BaseComponent
     this.activatedRoute.queryParams.subscribe(params => {
-      debugger
+
       const vnp_ResponseCode = params['vnp_ResponseCode']; // Mã phản hồi từ VNPay
-      const orderId:number = Number(params['vnp_TxnRef']); // Mã đơn hàng (nếu bạn truyền vào khi tạo URL thanh toán)
-      debugger
+      const orderId: number = Number(params['vnp_TxnRef']); // Mã đơn hàng (nếu bạn truyền vào khi tạo URL thanh toán)
+
       if (vnp_ResponseCode === '00') {
         // Thanh toán thành công
         this.handlePaymentSuccess(orderId);
@@ -29,7 +29,7 @@ export class PaymentCallbackComponent extends BaseComponent implements OnInit { 
     });
   }
 
-  handlePaymentSuccess(orderId: number): void {    
+  handlePaymentSuccess(orderId: number): void {
     // Sử dụng this.orderService từ BaseComponent
     this.orderService.updateOrderStatus(orderId, 'shipped').subscribe({
       next: (response: ApiResponse) => {
@@ -43,7 +43,7 @@ export class PaymentCallbackComponent extends BaseComponent implements OnInit { 
         });
         // Sử dụng this.router từ BaseComponent để chuyển hướng
         setTimeout(() => {
-          debugger
+
           this.cartService.clearCart();
           this.router.navigate(['/']);
         }, 3000);

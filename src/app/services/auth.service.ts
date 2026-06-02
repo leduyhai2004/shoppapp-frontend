@@ -17,9 +17,9 @@ export class AuthService {
 
   // Corrected function name and parameter usage
   authenticate(loginType: 'facebook' | 'google'): Observable<string> {
-    debugger
+
     return this.http.get(
-      `${this.apiBaseUrl}/users/auth/social-login?login_type=${loginType}`, 
+      `${this.apiBaseUrl}/users/auth/social-login?login_type=${loginType}`,
       { responseType: 'text' }
     );
   }

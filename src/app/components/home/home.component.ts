@@ -12,15 +12,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../base/base.component';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
-    imports: [
-        FooterComponent,
-        HeaderComponent,
-        CommonModule,
-        FormsModule
-    ]
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+  imports: [
+    FooterComponent,
+    HeaderComponent,
+    CommonModule,
+    FormsModule
+  ]
 })
 export class HomeComponent extends BaseComponent implements OnInit {
   products: Product[] = [];
@@ -34,7 +34,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
   keyword: string = "";
   localStorage?: Storage | undefined;
   apiBaseUrl = environment.apiBaseUrl;
-  
+
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
@@ -44,7 +44,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     });
     this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
     this.getCategories(0, 100);
-  }  
+  }
 
   constructor() {
     super();
@@ -54,11 +54,11 @@ export class HomeComponent extends BaseComponent implements OnInit {
   getCategories(page: number, limit: number) {
     this.categoryService.getCategories(page, limit).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger;
+
         this.categories = apiResponse.data;
       },
       complete: () => {
-        debugger;
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -74,17 +74,17 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.currentPage = 0;
     this.itemsPerPage = 12;
     this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
-    this.router.navigate(['/home'], { 
-      queryParams: 
-      { keyword: this.keyword, categoryId: this.selectedCategoryId, page: this.currentPage } 
+    this.router.navigate(['/home'], {
+      queryParams:
+        { keyword: this.keyword, categoryId: this.selectedCategoryId, page: this.currentPage }
     });
-  }  
+  }
 
   getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
-    debugger;
+
     this.productService.getProducts(keyword, selectedCategoryId, page, limit).subscribe({
       next: (apiresponse: ApiResponse) => {
-        debugger;
+
         const response = apiresponse.data;
         response.products.forEach((product: Product) => {
           product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
@@ -94,7 +94,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
         this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
       },
       complete: () => {
-        debugger;
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -110,11 +110,11 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.currentPage = page < 0 ? 0 : page;
     this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
     this.router.navigate(['/home'], { queryParams: { page: this.currentPage } });
-  }  
-  
+  }
+
   // Hàm xử lý sự kiện khi sản phẩm được bấm vào
   onProductClick(productId: number) {
-    debugger;
+
     // Điều hướng đến trang detail-product với productId là tham số
     this.router.navigate(['/products', productId]);
   }

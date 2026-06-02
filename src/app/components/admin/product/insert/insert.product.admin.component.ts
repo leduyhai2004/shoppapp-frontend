@@ -9,13 +9,13 @@ import { ApiResponse } from '../../../../responses/api.response';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../../../base/base.component';
 @Component({
-    selector: 'app-insert.product.admin',
-    templateUrl: './insert.product.admin.component.html',
-    styleUrls: ['./insert.product.admin.component.scss'],
-    imports: [
-        CommonModule,
-        FormsModule,
-    ]
+  selector: 'app-insert.product.admin',
+  templateUrl: './insert.product.admin.component.html',
+  styleUrls: ['./insert.product.admin.component.scss'],
+  imports: [
+    CommonModule,
+    FormsModule,
+  ]
 })
 export class InsertProductAdminComponent extends BaseComponent implements OnInit {
   insertProductDTO: InsertProductDTO = {
@@ -28,18 +28,18 @@ export class InsertProductAdminComponent extends BaseComponent implements OnInit
   categories: Category[] = []; // Dữ liệu động từ categoryService    
   ngOnInit() {
     this.getCategories(1, 100)
-  } 
+  }
   getCategories(page: number, limit: number) {
     this.categoryService.getCategories(page, limit).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger;
+
         this.categories = apiResponse.data;
       },
       complete: () => {
-        debugger;
+
       },
       error: (error: HttpErrorResponse) => {
-        debugger;
+
         console.error(error?.error?.message ?? '');
       }
     });
@@ -56,31 +56,31 @@ export class InsertProductAdminComponent extends BaseComponent implements OnInit
     this.insertProductDTO.images = files;
   }
 
-  insertProduct() {    
+  insertProduct() {
     this.productService.insertProduct(this.insertProductDTO).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger
+
         if (this.insertProductDTO.images.length > 0) {
           const productId = apiResponse.data.id; // Assuming the response contains the newly created product's ID
           this.productService.uploadImages(productId, this.insertProductDTO.images).subscribe({
-            next: (imageResponse:ApiResponse) => {
-              debugger
+            next: (imageResponse: ApiResponse) => {
+
               // Handle the uploaded images response if needed              
               console.log('Images uploaded successfully:', imageResponse.data);
               // Navigate back to the previous page
               this.router.navigate(['../'], { relativeTo: this.activatedRoute });
             },
             error: (error: HttpErrorResponse) => {
-              debugger;
+
               console.error(error?.error?.message ?? '');
             }
-          })          
+          })
         }
       },
       error: (error: HttpErrorResponse) => {
-        debugger;
+
         console.error(error?.error?.message ?? '');
-      } 
-    });    
+      }
+    });
   }
 }

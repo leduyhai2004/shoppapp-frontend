@@ -8,13 +8,13 @@ import { ApiResponse } from '../../../responses/api.response';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../../base/base.component';
 @Component({
-    selector: 'app-detail-order-admin',
-    templateUrl: './detail.order.admin.component.html',
-    styleUrls: ['./detail.order.admin.component.scss'],
-    imports: [
-        CommonModule,
-        FormsModule,
-    ]
+  selector: 'app-detail-order-admin',
+  templateUrl: './detail.order.admin.component.html',
+  styleUrls: ['./detail.order.admin.component.scss'],
+  imports: [
+    CommonModule,
+    FormsModule,
+  ]
 })
 
 export class DetailOrderAdminComponent extends BaseComponent implements OnInit {
@@ -43,11 +43,11 @@ export class DetailOrderAdminComponent extends BaseComponent implements OnInit {
   }
 
   getOrderDetails(): void {
-    debugger
+
     this.orderId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.orderService.getOrderById(this.orderId).subscribe({
       next: (apiResponse: ApiResponse) => {
-        debugger;
+
         const response = apiResponse.data
         this.orderResponse.id = response.id;
         this.orderResponse.user_id = response.user_id;
@@ -81,10 +81,10 @@ export class DetailOrderAdminComponent extends BaseComponent implements OnInit {
         }
         this.orderResponse.shipping_method = response.shipping_method;
         this.orderResponse.status = response.status;
-        debugger
+
       },
       complete: () => {
-        debugger;
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -97,12 +97,12 @@ export class DetailOrderAdminComponent extends BaseComponent implements OnInit {
   }
 
   saveOrder(): void {
-    debugger
+
     this.orderService
       .updateOrder(this.orderId, new OrderDTO(this.orderResponse))
       .subscribe({
         next: (response: ApiResponse) => {
-          debugger
+
           // Handle the successful update
           //console.log('Order updated successfully:', response);
           // Navigate back to the previous page
@@ -110,7 +110,7 @@ export class DetailOrderAdminComponent extends BaseComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.activatedRoute });
         },
         complete: () => {
-          debugger;
+
         },
         error: (error: HttpErrorResponse) => {
           this.toastService.showToast({

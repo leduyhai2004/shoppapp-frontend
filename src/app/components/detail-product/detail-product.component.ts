@@ -11,15 +11,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../base/base.component';
 
 @Component({
-    selector: 'app-detail-product',
-    templateUrl: './detail-product.component.html',
-    styleUrls: ['./detail-product.component.scss'],
-    imports: [
-        FooterComponent,
-        HeaderComponent,
-        CommonModule,
-        NgbModule
-    ]
+  selector: 'app-detail-product',
+  templateUrl: './detail-product.component.html',
+  styleUrls: ['./detail-product.component.scss'],
+  imports: [
+    FooterComponent,
+    HeaderComponent,
+    CommonModule,
+    NgbModule
+  ]
 })
 
 export class DetailProductComponent extends BaseComponent implements OnInit {
@@ -27,11 +27,11 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
   productId: number = 0;
   currentImageIndex: number = 0;
   quantity: number = 1;
-  isPressedAddToCart: boolean = false;  
+  isPressedAddToCart: boolean = false;
   ngOnInit() {
     // Lấy productId từ URL      
     const idParam = this.activatedRoute.snapshot.paramMap.get('id');
-    debugger
+
     //this.cartService.clearCart();
     //const idParam = 9 //fake tạm 1 giá trị
     if (idParam !== null) {
@@ -42,19 +42,19 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
         next: (apiResponse: ApiResponse) => {
           // Lấy danh sách ảnh sản phẩm và thay đổi URL
           const response = apiResponse.data
-          debugger
+
           if (response.product_images && response.product_images.length > 0) {
             response.product_images.forEach((product_image: ProductImage) => {
               product_image.image_url = `${environment.apiBaseUrl}/products/images/${product_image.image_url}`;
             });
           }
-          debugger
+
           this.product = response
           // Bắt đầu với ảnh đầu tiên
           this.showImage(0);
         },
         complete: () => {
-          debugger;
+
         },
         error: (error: HttpErrorResponse) => {
           this.toastService.showToast({
@@ -73,7 +73,7 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
     }
   }
   showImage(index: number): void {
-    debugger
+
     if (this.product && this.product.product_images &&
       this.product.product_images.length > 0) {
       // Đảm bảo index nằm trong khoảng hợp lệ        
@@ -87,21 +87,21 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
     }
   }
   thumbnailClick(index: number) {
-    debugger
+
     // Gọi khi một thumbnail được bấm
     this.currentImageIndex = index; // Cập nhật currentImageIndex
   }
   nextImage(): void {
-    debugger
+
     this.showImage(this.currentImageIndex + 1);
   }
 
   previousImage(): void {
-    debugger
+
     this.showImage(this.currentImageIndex - 1);
   }
   addToCart(): void {
-    debugger
+
     this.isPressedAddToCart = true;
     if (this.product) {
       this.cartService.addToCart(this.product.id, this.quantity);
@@ -112,7 +112,7 @@ export class DetailProductComponent extends BaseComponent implements OnInit {
   }
 
   increaseQuantity(): void {
-    debugger
+
     this.quantity++;
   }
 

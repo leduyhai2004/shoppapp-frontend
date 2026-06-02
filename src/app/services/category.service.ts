@@ -15,22 +15,22 @@ export class CategoryService {
   private apiBaseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) { }
-  getCategories(page: number, limit: number):Observable<ApiResponse> {
+  getCategories(page: number, limit: number): Observable<ApiResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
-      .set('limit', limit.toString());           
-      return this.http.get<ApiResponse>(`${environment.apiBaseUrl}/categories`, { params });           
+      .set('limit', limit.toString());
+    return this.http.get<ApiResponse>(`${environment.apiBaseUrl}/categories`, { params });
   }
   getDetailCategory(id: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/categories/${id}`);
   }
   deleteCategory(id: number): Observable<ApiResponse> {
-    debugger
+
     return this.http.delete<ApiResponse>(`${this.apiBaseUrl}/categories/${id}`);
   }
   updateCategory(id: number, updatedCategory: UpdateCategoryDTO): Observable<ApiResponse> {
     return this.http.put<ApiResponse>(`${this.apiBaseUrl}/categories/${id}`, updatedCategory);
-  }  
+  }
   insertCategory(insertCategoryDTO: InsertCategoryDTO): Observable<ApiResponse> {
     // Add a new category
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}/categories`, insertCategoryDTO);

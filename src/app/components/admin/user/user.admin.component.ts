@@ -8,27 +8,27 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../../base/base.component';
 
 @Component({
-    selector: 'app-user.admin',
-    templateUrl: './user.admin.component.html',
-    styleUrl: './user.admin.component.scss',
-    imports: [
-        CommonModule,
-        FormsModule,
-    ]
+  selector: 'app-user.admin',
+  templateUrl: './user.admin.component.html',
+  styleUrl: './user.admin.component.scss',
+  imports: [
+    CommonModule,
+    FormsModule,
+  ]
 })
-export class UserAdminComponent extends BaseComponent implements OnInit{  
+export class UserAdminComponent extends BaseComponent implements OnInit {
   route = inject(ActivatedRoute);
-  
-  users: UserResponse[] = [];        
+
+  users: UserResponse[] = [];
   currentPage: number = 0;
   itemsPerPage: number = 12;
   pages: number[] = [];
-  totalPages:number = 0;
+  totalPages: number = 0;
   visiblePages: number[] = [];
-  keyword:string = "";
-  localStorage?:Storage;
-  
-  constructor(){
+  keyword: string = "";
+  localStorage?: Storage;
+
+  constructor() {
     super()
     this.localStorage = document.defaultView?.localStorage;
   }
@@ -36,17 +36,17 @@ export class UserAdminComponent extends BaseComponent implements OnInit{
     this.currentPage = Number(this.localStorage?.getItem('currentUserAdminPage')) || 0;
     this.getUsers(this.keyword, this.currentPage, this.itemsPerPage);
   }
-  
+
   searchUsers() {
     this.currentPage = 0;
     this.itemsPerPage = 12;
     this.getUsers(this.keyword.trim(), this.currentPage, this.itemsPerPage);
   }
-  
+
   getUsers(keyword: string, page: number, limit: number) {
-    this.userService.getUsers({ keyword, page, limit }).subscribe({      
-      next: (apiResponse: ApiResponse) => {        
-        debugger
+    this.userService.getUsers({ keyword, page, limit }).subscribe({
+      next: (apiResponse: ApiResponse) => {
+
         const response = apiResponse.data
         this.users = response.users;
         this.totalPages = response.totalPages;
@@ -54,7 +54,7 @@ export class UserAdminComponent extends BaseComponent implements OnInit{
       },
       complete: () => {
         // Handle complete event
-        debugger
+
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -65,30 +65,62 @@ export class UserAdminComponent extends BaseComponent implements OnInit{
       }
     });
   }
-  
+
   onPageChange(page: number) {
     this.currentPage = page < 0 ? 0 : page;
     this.localStorage?.setItem('currentUserAdminPage', String(this.currentPage));
     this.getUsers(this.keyword, this.currentPage, this.itemsPerPage);
-  }         
-    // Hàm xử lý sự kiện khi thêm mới sản phẩm
-    insertUser() {
-      debugger
-      // Điều hướng đến trang detail-user với userId là tham số
-      this.router.navigate(['/admin/users/insert']);
-    } 
+  }
+  // Hàm xử lý sự kiện khi thêm mới sản phẩm
+  insertUser() {
 
-    // Hàm xử lý sự kiện khi sản phẩm được bấm vào
-    updateUser(userId: number) {
-      debugger
-      // Điều hướng đến trang detail-user với userId là tham số
-      this.router.navigate(['/admin/users/update', userId]);
-    }  
-    resetPassword(userId: number) {
-      this.userService.resetPassword(userId).subscribe({
-        next: (apiResponse: ApiResponse) => {
+    // Điều hướng đến trang detail-user với userId là tham số
+    this.router.navigate(['/admin/users/insert']);
+  }
+
+  // Hàm xử lý sự kiện khi sản phẩm được bấm vào
+  updateUser(userId: number) {
+
+    // Điều hướng đến trang detail-user với userId là tham số
+    this.router.navigate(['/admin/users/update', userId]);
+  }
+  resetPassword(userId: number) {
+    this.userService.resetPassword(userId).subscribe({
+      next: (apiResponse: ApiResponse) => {
+        console.error('Block/unblock user successfully');
+        //location.reload();
+      },
+      complete: () => {
+        // Handle complete event
+      },
+      error: (error: HttpErrorResponse) => {
+        this.toastService.showToast({
+          error: error,
+          defaultMsg: 'Lỗi reset mật khẩu',
+          title: 'Lỗi Bảo Mật'
+        });
+      }
+    });
+  }
+
+  toggleUserStatus(user: UserResponse) {
+    let confirmation: boolean;
+    if (user.is_active) {
+      confirmation = window.confirm('Are you sure you want to block this user?');
+    } else {
+      confirmation = window.confirm('Are you sure you want to enable this user?');
+    }
+
+    if (confirmation) {
+      const params = {
+        userId: user.id,
+        enable: !user.is_active
+      };
+
+      this.userService.toggleUserStatus(params).subscribe({
+        next: (response: any) => {
           console.error('Block/unblock user successfully');
-          //location.reload();
+          location.reload();
         },
         complete: () => {
           // Handle complete event
@@ -96,43 +128,11 @@ export class UserAdminComponent extends BaseComponent implements OnInit{
         error: (error: HttpErrorResponse) => {
           this.toastService.showToast({
             error: error,
-            defaultMsg: 'Lỗi reset mật khẩu',
-            title: 'Lỗi Bảo Mật'
+            defaultMsg: 'Lỗi thay đổi trạng thái người dùng',
+            title: 'Lỗi Hệ Thống'
           });
         }
       });
     }
-  
-    toggleUserStatus(user: UserResponse) {
-      let confirmation: boolean;
-      if (user.is_active) {
-        confirmation = window.confirm('Are you sure you want to block this user?');
-      } else {
-        confirmation = window.confirm('Are you sure you want to enable this user?');
-      }
-      
-      if (confirmation) {
-        const params = {
-          userId: user.id,
-          enable: !user.is_active
-        };
-    
-        this.userService.toggleUserStatus(params).subscribe({
-          next: (response: any) => {
-            console.error('Block/unblock user successfully');
-            location.reload();
-          },
-          complete: () => {
-            // Handle complete event
-          },
-          error: (error: HttpErrorResponse) => {
-            this.toastService.showToast({
-              error: error,
-              defaultMsg: 'Lỗi thay đổi trạng thái người dùng',
-              title: 'Lỗi Hệ Thống'
-            });
-          }
-        });
-      }      
-    }
+  }
 }

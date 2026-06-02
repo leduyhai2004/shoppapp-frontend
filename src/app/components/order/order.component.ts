@@ -13,16 +13,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../base/base.component';
 
 @Component({
-    selector: 'app-order',
-    templateUrl: './order.component.html',
-    styleUrls: ['./order.component.scss'],
-    imports: [
-        FooterComponent,
-        HeaderComponent,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-    ]
+  selector: 'app-order',
+  templateUrl: './order.component.html',
+  styleUrls: ['./order.component.scss'],
+  imports: [
+    FooterComponent,
+    HeaderComponent,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ]
 })
 export class OrderComponent extends BaseComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
@@ -53,7 +53,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   constructor() {
     super();
     // Tạo FormGroup
-    debugger
+
     this.orderForm = this.formBuilder.group({
       fullname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -70,13 +70,13 @@ export class OrderComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     // Lấy userId
     this.orderData.user_id = this.tokenService.getUserId();
-    this.orderForm.patchValue({...this.orderData,});    
+    this.orderForm.patchValue({ ...this.orderData, });
 
     // Lấy giỏ hàng
     this.cart = this.cartService.getCart();
     const productIds = Array.from(this.cart.keys());
 
-    if(productIds.length === 0) {
+    if (productIds.length === 0) {
       return;
     }
 
@@ -111,7 +111,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
 
   // Khi bấm nút "Đặt hàng"
   placeOrder() {
-    debugger
+
     if (this.orderForm.valid) {
       // Gán giá trị form vào orderData
       this.orderData = {
@@ -128,9 +128,9 @@ export class OrderComponent extends BaseComponent implements OnInit {
       // Kiểm tra: Nếu payment_method = 'vnpay' => Gọi createPaymentUrl, 
       // ngược lại => placeOrder
       if (this.orderData.payment_method === 'vnpay') {
-        debugger
+
         const amount = this.orderData.total_money || 0;
-      
+
         // Bước 1: Gọi API tạo link thanh toán
         this.paymentService.createPaymentUrl({ amount, language: 'vn' })
           .subscribe({
@@ -138,10 +138,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
               // res.data là URL thanh toán, ví dụ:
               // https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=49800&...&vnp_TxnRef=18425732&...
               const paymentUrl = res.data;
-              console.log('URL thanh toán:', paymentUrl);              
+              console.log('URL thanh toán:', paymentUrl);
               // Bước 2: Tách vnp_TxnRef từ URL vừa trả về
               const vnp_TxnRef = new URL(paymentUrl).searchParams.get('vnp_TxnRef') || '';
-      
+
               // Bước 3: Gọi placeOrder kèm theo vnp_TxnRef
               this.orderService.placeOrder({
                 ...this.orderData,
@@ -149,11 +149,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
               }).subscribe({
                 next: (placeOrderResponse: ApiResponse) => {
                   // Bước 4: Nếu đặt hàng thành công, điều hướng sang trang thanh toán VNPAY
-                  debugger
+
                   window.location.href = paymentUrl;
                 },
                 error: (err: HttpErrorResponse) => {
-                  debugger
+
                   this.toastService.showToast({
                     error: err,
                     defaultMsg: 'Lỗi trong quá trình đặt hàng',
@@ -171,18 +171,18 @@ export class OrderComponent extends BaseComponent implements OnInit {
             }
           });
       } else {
-        debugger
+
         // Chọn COD => Gọi this.orderService.placeOrder
         this.orderService.placeOrder(this.orderData).subscribe({
           next: (response: ApiResponse) => {
-            debugger
+
             console.log('Đặt hàng COD thành công!', response);
             // Xoá giỏ hàng, về trang chủ
             this.cartService.clearCart();
             this.router.navigate(['/']);
           },
           error: (err: HttpErrorResponse) => {
-            debugger
+
             this.toastService.showToast({
               error: err,
               defaultMsg: 'Lỗi trong quá trình đặt hàng',

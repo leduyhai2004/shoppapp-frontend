@@ -9,29 +9,29 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../../../base/base.component';
 
 @Component({
-    selector: 'app-insert.category.admin',
-    templateUrl: './insert.category.admin.component.html',
-    styleUrls: ['./insert.category.admin.component.scss'],
-    imports: [
-        CommonModule,
-        FormsModule,
-    ]
+  selector: 'app-insert.category.admin',
+  templateUrl: './insert.category.admin.component.html',
+  styleUrls: ['./insert.category.admin.component.scss'],
+  imports: [
+    CommonModule,
+    FormsModule,
+  ]
 })
 export class InsertCategoryAdminComponent extends BaseComponent implements OnInit {
   insertCategoryDTO: InsertCategoryDTO = {
-    name: '',    
+    name: '',
   };
-  route: ActivatedRoute = inject(ActivatedRoute);  
+  route: ActivatedRoute = inject(ActivatedRoute);
   categories: Category[] = []; // Dữ liệu động từ categoryService  
   ngOnInit() {
-    
-  }   
 
-  insertCategory() {    
+  }
+
+  insertCategory() {
     this.categoryService.insertCategory(this.insertCategoryDTO).subscribe({
       next: (response) => {
-        debugger
-        this.router.navigate(['/admin/categories']);        
+
+        this.router.navigate(['/admin/categories']);
       },
       error: (error: HttpErrorResponse) => {
         this.toastService.showToast({
@@ -39,7 +39,7 @@ export class InsertCategoryAdminComponent extends BaseComponent implements OnIni
           defaultMsg: 'Lỗi thêm danh mục mới',
           title: 'Lỗi Thêm Mới'
         });
-      }       
-    });    
+      }
+    });
   }
 }

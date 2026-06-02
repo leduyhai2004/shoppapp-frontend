@@ -17,19 +17,19 @@ import { of } from 'rxjs';
 
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    imports: [
-        FooterComponent,
-        HeaderComponent,
-        CommonModule,
-        FormsModule
-    ]
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  imports: [
+    FooterComponent,
+    HeaderComponent,
+    CommonModule,
+    FormsModule
+  ]
 })
-export class LoginComponent extends BaseComponent implements OnInit{
-  @ViewChild('loginForm') loginForm!: NgForm;  
-    
+export class LoginComponent extends BaseComponent implements OnInit {
+  @ViewChild('loginForm') loginForm!: NgForm;
+
 
   /*
   //Login user1
@@ -59,11 +59,11 @@ export class LoginComponent extends BaseComponent implements OnInit{
     console.log(`Phone typed: ${this.phoneNumber}`);
     //how to validate ? phone must be at least 6 characters
   }
-  
+
 
   ngOnInit() {
     // Gọi API lấy danh sách roles và lưu vào biến roles
-    debugger
+
     this.roleService.getRoles().subscribe({
       next: ({ data: roles }: ApiResponse) => {
         this.roles = roles;
@@ -76,18 +76,18 @@ export class LoginComponent extends BaseComponent implements OnInit{
           title: 'Lỗi Tải Vai Trò'
         });
       }
-    });    
+    });
   }
   createAccount() {
-    debugger
+
     // Chuyển hướng người dùng đến trang đăng ký (hoặc trang tạo tài khoản)
-    this.router.navigate(['/register']); 
+    this.router.navigate(['/register']);
   }
-  loginWithGoogle() {    
-    debugger
+  loginWithGoogle() {
+
     this.authService.authenticate('google').subscribe({
       next: (url: string) => {
-        debugger
+
         // Chuyển hướng người dùng đến URL đăng nhập Google
         window.location.href = url;
       },
@@ -99,14 +99,14 @@ export class LoginComponent extends BaseComponent implements OnInit{
         });
       }
     });
-  }  
-  
-  loginWithFacebook() {         
+  }
+
+  loginWithFacebook() {
     // Logic đăng nhập với Facebook
-    debugger
+
     this.authService.authenticate('facebook').subscribe({
       next: (url: string) => {
-        debugger
+
         // Chuyển hướng người dùng đến URL đăng nhập Facebook
         window.location.href = url;
       },
@@ -119,14 +119,14 @@ export class LoginComponent extends BaseComponent implements OnInit{
       }
     });
   }
-  
+
   login() {
     const loginDTO: LoginDTO = {
       phone_number: this.phoneNumber,
       password: this.password,
       role_id: this.selectedRole?.id ?? 1
     };
-  
+
     this.userService.login(loginDTO).pipe(
       tap((apiResponse: ApiResponse) => {
         const { token } = apiResponse.data;
@@ -140,11 +140,11 @@ export class LoginComponent extends BaseComponent implements OnInit{
               ...apiResponse2.data,
               date_of_birth: new Date(apiResponse2.data.date_of_birth),
             };
-  
+
             if (this.rememberMe) {
               this.userService.saveUserResponseToLocalStorage(this.userResponse);
             }
-  
+
             if (this.userResponse?.role.name === 'admin') {
               this.router.navigate(['/admin']);
             } else if (this.userResponse?.role.name === 'user') {
@@ -170,7 +170,7 @@ export class LoginComponent extends BaseComponent implements OnInit{
       }
     });
   }
-  
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
