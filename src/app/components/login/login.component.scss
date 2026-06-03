@@ -121,7 +121,8 @@
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
-    border-radius: 8px; /* Thêm thuộc tính này để bo viền */
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
   }
   
   .google-button {
@@ -135,4 +136,17 @@
     color: white;
     border: none;
   }
-  
+
+  .social-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .social-button:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .social-button:not(:disabled):active {
+    transform: translateY(0);
+  }

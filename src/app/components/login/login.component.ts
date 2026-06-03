@@ -1,9 +1,8 @@
-import { Component, ViewChild, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { LoginDTO } from '../../dtos/user/login.dto';
 import { NgForm } from '@angular/forms';
-import { Role } from '../../models/role'; // Đường dẫn đến model Role
+import { Role } from '../../models/role';
 import { UserResponse } from '../../responses/user/user.response';
-
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
@@ -11,10 +10,9 @@ import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '../../responses/api.response';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseComponent } from '../base/base.component';
-
+import { SocialLoginProvider } from '../../services/auth.service';
 import { tap, switchMap, catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
-
 
 @Component({
   selector: 'app-login',
@@ -30,97 +28,34 @@ import { of } from 'rxjs';
 export class LoginComponent extends BaseComponent implements OnInit {
   @ViewChild('loginForm') loginForm!: NgForm;
 
+  phoneNumber = '33445566';
+  password = '123456789';
+  showPassword = false;
+  roles: Role[] = [];
+  rememberMe = true;
+  selectedRole: Role | undefined;
+  userResponse?: UserResponse;
 
-  /*
-  //Login user1
-  phoneNumber: string = '33445566';
-  password: string = '123456789';
+  /** Trạng thái loading cho social login buttons */
+  isSocialLoading = false;
 
-  //Login user2
-  phoneNumber: string = '0964896239';
-  password: string = '123456789';
-
-
-  //Login admin
-  phoneNumber: string = '11223344';
-  password: string = '11223344';
-
-  */
-  phoneNumber: string = '33445566';
-  password: string = '123456789';
-  showPassword: boolean = false;
-
-  roles: Role[] = []; // Mảng roles
-  rememberMe: boolean = true;
-  selectedRole: Role | undefined; // Biến để lưu giá trị được chọn từ dropdown
-  userResponse?: UserResponse
-
-  onPhoneNumberChange() {
-    console.log(`Phone typed: ${this.phoneNumber}`);
-    //how to validate ? phone must be at least 6 characters
+  ngOnInit(): void {
+    this.loadRoles();
   }
 
+  // ==================== Navigation ====================
 
-  ngOnInit() {
-    // Gọi API lấy danh sách roles và lưu vào biến roles
-
-    this.roleService.getRoles().subscribe({
-      next: ({ data: roles }: ApiResponse) => {
-        this.roles = roles;
-        this.selectedRole = roles.length > 0 ? roles[0] : undefined;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.toastService.showToast({
-          error: error,
-          defaultMsg: 'Lỗi tải danh sách vai trò',
-          title: 'Lỗi Tải Vai Trò'
-        });
-      }
-    });
-  }
-  createAccount() {
-
-    // Chuyển hướng người dùng đến trang đăng ký (hoặc trang tạo tài khoản)
+  createAccount(): void {
     this.router.navigate(['/register']);
   }
-  loginWithGoogle() {
 
-    this.authService.authenticate('google').subscribe({
-      next: (url: string) => {
+  // ==================== Traditional Login ====================
 
-        // Chuyển hướng người dùng đến URL đăng nhập Google
-        window.location.href = url;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.toastService.showToast({
-          error: error,
-          defaultMsg: 'Lỗi kết nối với Google',
-          title: 'Lỗi Đăng Nhập'
-        });
-      }
-    });
+  onPhoneNumberChange(): void {
+    console.log(`Phone typed: ${this.phoneNumber}`);
   }
 
-  loginWithFacebook() {
-    // Logic đăng nhập với Facebook
-
-    this.authService.authenticate('facebook').subscribe({
-      next: (url: string) => {
-
-        // Chuyển hướng người dùng đến URL đăng nhập Facebook
-        window.location.href = url;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.toastService.showToast({
-          error: error,
-          defaultMsg: 'Lỗi kết nối với Facebook',
-          title: 'Lỗi Đăng Nhập'
-        });
-      }
-    });
-  }
-
-  login() {
+  login(): void {
     const loginDTO: LoginDTO = {
       phone_number: this.phoneNumber,
       password: this.password,
@@ -129,31 +64,16 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
     this.userService.login(loginDTO).pipe(
       tap((apiResponse: ApiResponse) => {
-        const { token } = apiResponse.data;
-        this.tokenService.setToken(token);
+        this.tokenService.setToken(apiResponse.data.token);
       }),
       switchMap((apiResponse: ApiResponse) => {
-        const { token } = apiResponse.data;
-        return this.userService.getUserDetail(token).pipe(
-          tap((apiResponse2: ApiResponse) => {
-            this.userResponse = {
-              ...apiResponse2.data,
-              date_of_birth: new Date(apiResponse2.data.date_of_birth),
-            };
-
-            if (this.rememberMe) {
-              this.userService.saveUserResponseToLocalStorage(this.userResponse);
-            }
-
-            if (this.userResponse?.role.name === 'admin') {
-              this.router.navigate(['/admin']);
-            } else if (this.userResponse?.role.name === 'user') {
-              this.router.navigate(['/']);
-            }
+        return this.userService.getUserDetail(apiResponse.data.token).pipe(
+          tap((detailResponse: ApiResponse) => {
+            this.handlePostLogin(detailResponse);
           }),
           catchError((error: HttpErrorResponse) => {
             console.error('Lỗi khi lấy thông tin người dùng:', error?.error?.message ?? '');
-            return of(null); // Tiếp tục chuỗi Observable
+            return of(null);
           })
         );
       }),
@@ -171,7 +91,81 @@ export class LoginComponent extends BaseComponent implements OnInit {
     });
   }
 
-  togglePassword() {
+  // ==================== Social Login ====================
+
+  loginWithGoogle(): void {
+    this.socialLogin('google');
+  }
+
+  loginWithFacebook(): void {
+    this.socialLogin('facebook');
+  }
+
+  /**
+   * Xử lý social login chung cho cả Google và Facebook.
+   * Gọi backend lấy auth URL rồi redirect user.
+   */
+  private socialLogin(provider: SocialLoginProvider): void {
+    if (this.isSocialLoading) return;
+    this.isSocialLoading = true;
+
+    this.authService.getAuthUrl(provider).pipe(
+      finalize(() => {
+        this.isSocialLoading = false;
+      })
+    ).subscribe({
+      next: (url: string) => {
+        window.location.href = url;
+      },
+      error: (error: HttpErrorResponse) => {
+        const providerName = provider === 'google' ? 'Google' : 'Facebook';
+        this.toastService.showToast({
+          error: error,
+          defaultMsg: `Lỗi kết nối với ${providerName}`,
+          title: 'Lỗi Đăng Nhập'
+        });
+      }
+    });
+  }
+
+  // ==================== Shared Helpers ====================
+
+  /**
+   * Xử lý sau khi login thành công (dùng chung cho cả login thường và social login).
+   */
+  private handlePostLogin(apiResponse: ApiResponse): void {
+    this.userResponse = {
+      ...apiResponse.data,
+      date_of_birth: new Date(apiResponse.data.date_of_birth),
+    };
+
+    if (this.rememberMe) {
+      this.userService.saveUserResponseToLocalStorage(this.userResponse);
+    }
+
+    const targetRoute = this.userResponse?.role.name === 'admin' ? '/admin' : '/';
+    this.router.navigate([targetRoute]);
+  }
+
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  // ==================== Private ====================
+
+  private loadRoles(): void {
+    this.roleService.getRoles().subscribe({
+      next: ({ data: roles }: ApiResponse) => {
+        this.roles = roles;
+        this.selectedRole = roles.length > 0 ? roles[0] : undefined;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.toastService.showToast({
+          error: error,
+          defaultMsg: 'Lỗi tải danh sách vai trò',
+          title: 'Lỗi Tải Vai Trò'
+        });
+      }
+    });
   }
 }

@@ -1,1 +1,47 @@
-<p>Đang xử lý đăng nhập...</p>
+<div class="callback-container">
+  <div class="callback-card">
+
+    <!-- Loading State -->
+    <div *ngIf="state === 'loading'" class="state-content">
+      <div class="spinner-wrapper">
+        <div class="spinner"></div>
+        <div class="spinner-glow"></div>
+      </div>
+      <h2 class="title">Đang xác thực...</h2>
+      <p class="subtitle">Vui lòng đợi trong giây lát</p>
+    </div>
+
+    <!-- Success State -->
+    <div *ngIf="state === 'success'" class="state-content">
+      <div class="success-icon-wrapper">
+        <svg class="success-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="2"/>
+          <path d="M7 12.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="title success-text">Đăng nhập thành công!</h2>
+      <p class="subtitle">Đang chuyển hướng...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="state === 'error'" class="state-content">
+      <div class="error-icon-wrapper">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="2"/>
+          <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="title error-text">Đăng nhập thất bại</h2>
+      <p class="error-message">{{ errorMessage }}</p>
+      <button class="btn-retry" (click)="goToLogin()">
+        <svg viewBox="0 0 20 20" fill="currentColor" class="btn-icon">
+          <path fill-rule="evenodd"
+            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+            clip-rule="evenodd" />
+        </svg>
+        Quay về đăng nhập
+      </button>
+    </div>
+
+  </div>
+</div>

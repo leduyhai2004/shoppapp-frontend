@@ -61,14 +61,18 @@
                     <button 
                         type="button" 
                         (click)="loginWithGoogle()"
+                        [disabled]="isSocialLoading"
                         class="social-button google-button">
-                        Đăng nhập với Google
+                        <span *ngIf="!isSocialLoading">Đăng nhập với Google</span>
+                        <span *ngIf="isSocialLoading">Đang xử lý...</span>
                     </button>
                     <button 
                         type="button" 
                         (click)="loginWithFacebook()"
+                        [disabled]="isSocialLoading"
                         class="social-button facebook-button">
-                        Đăng nhập với Facebook
+                        <span *ngIf="!isSocialLoading">Đăng nhập với Facebook</span>
+                        <span *ngIf="isSocialLoading">Đang xử lý...</span>
                     </button>
                   </div>
                   <p class="text-center">Bạn chưa đăng ký? <span>
