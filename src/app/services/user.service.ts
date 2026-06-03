@@ -31,7 +31,7 @@ export class UserService {
   constructor(
     @Inject(DOCUMENT) private document: Document
   ) {
-    this.localStorage = document.defaultView?.localStorage;
+    this.localStorage = this.document.defaultView?.localStorage;
   }
 
   register(registerDTO: RegisterDTO): Observable<ApiResponse> {

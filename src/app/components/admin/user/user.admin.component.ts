@@ -30,7 +30,7 @@ export class UserAdminComponent extends BaseComponent implements OnInit {
 
   constructor() {
     super()
-    this.localStorage = document.defaultView?.localStorage;
+    this.localStorage = this.document.defaultView?.localStorage;
   }
   ngOnInit(): void {
     this.currentPage = Number(this.localStorage?.getItem('currentUserAdminPage')) || 0;

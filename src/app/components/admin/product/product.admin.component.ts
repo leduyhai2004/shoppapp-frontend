@@ -32,7 +32,7 @@ export class ProductAdminComponent extends BaseComponent implements OnInit {
 
   constructor() {
     super();
-    this.localStorage = document.defaultView?.localStorage;
+    this.localStorage = this.document.defaultView?.localStorage;
   }
 
 

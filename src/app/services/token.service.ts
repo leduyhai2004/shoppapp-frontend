@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class TokenService {
     localStorage?:Storage;
 
     constructor(@Inject(DOCUMENT) private document: Document){
-        this.localStorage = document.defaultView?.localStorage;
+        this.localStorage = this.document.defaultView?.localStorage;
     }
     //getter/setter
     getToken():string {        

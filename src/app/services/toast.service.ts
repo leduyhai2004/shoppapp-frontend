@@ -1,11 +1,15 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
 
-  constructor() { }
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) { }
 
   showToast({ error, defaultMsg: defaultMessage, title = '', delay = 5000 }: {
     error?: any,
@@ -13,6 +17,10 @@ export class ToastService {
     title?: string,
     delay?: number
   }) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // Xác định message và màu sắc
     let message = defaultMessage;
     let toastClass = 'bg-danger'; // Mặc định cho lỗi
@@ -30,19 +38,19 @@ export class ToastService {
     }
 
     // Tạo container nếu chưa có
-    let toastContainer = document.getElementById('toast-container');
+    let toastContainer = this.document.getElementById('toast-container');
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
+      toastContainer = this.document.createElement('div');
       toastContainer.id = 'toast-container';
       toastContainer.style.position = 'fixed';
       toastContainer.style.top = '20px';
       toastContainer.style.right = '20px';
       toastContainer.style.zIndex = '9999';
-      document.body.appendChild(toastContainer);
+      this.document.body.appendChild(toastContainer);
     }
 
     // Tạo toast element
-    const toast = document.createElement('div');
+    const toast = this.document.createElement('div');
     toast.classList.add('toast', 'show', toastClass, 'text-white');
     toast.style.minWidth = '300px';
     toast.style.marginBottom = '1rem';

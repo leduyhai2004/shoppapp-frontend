@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { Product } from '../models/product';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ export class CartService {
   localStorage?: Storage;
 
   constructor(@Inject(DOCUMENT) private document: Document) {
-    this.localStorage = document.defaultView?.localStorage;
+    this.localStorage = this.document.defaultView?.localStorage;
     // Lấy dữ liệu giỏ hàng từ localStorage khi khởi tạo service            
     this.refreshCart()
   }
@@ -25,7 +24,7 @@ export class CartService {
   }
   private getCartKey(): string {
     const userResponseJSON = this.localStorage?.getItem('user');
-    const userResponse = JSON.parse(userResponseJSON!);
+    const userResponse = userResponseJSON ? JSON.parse(userResponseJSON) : null;
 
     return `cart:${userResponse?.id ?? ''}`;
 

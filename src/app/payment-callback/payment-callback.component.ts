@@ -19,6 +19,10 @@ export class PaymentCallbackComponent extends BaseComponent implements OnInit { 
       const vnp_ResponseCode = params['vnp_ResponseCode']; // Mã phản hồi từ VNPay
       const orderId: number = Number(params['vnp_TxnRef']); // Mã đơn hàng (nếu bạn truyền vào khi tạo URL thanh toán)
 
+      if (!vnp_ResponseCode) {
+        return;
+      }
+
       if (vnp_ResponseCode === '00') {
         // Thanh toán thành công
         this.handlePaymentSuccess(orderId);
@@ -70,7 +74,7 @@ export class PaymentCallbackComponent extends BaseComponent implements OnInit { 
     });
     // Chuyển hướng về trang thanh toán hoặc trang chủ
     setTimeout(() => {
-      this.router.navigate(['/checkout']);
+      this.router.navigate(['/orders']);
     }, 3000);
   }
 }
