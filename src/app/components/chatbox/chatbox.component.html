@@ -1,0 +1,90 @@
+<section class="chatbox" [class.chatbox--open]="isOpen" aria-live="polite">
+  @if (isOpen) {
+    <div class="chatbox__panel" role="dialog" aria-label="Trò chuyện với chatbot">
+      <header class="chatbox__header">
+        <div class="chatbox__header-info">
+          <div class="chatbox__avatar-status">
+            <div class="chatbox__header-avatar">
+              <i class="fa fa-android" aria-hidden="true"></i>
+            </div>
+            <span class="chatbox__status-dot"></span>
+          </div>
+          <div class="chatbox__header-text">
+            <strong>Shop Assistant</strong>
+            <span>Hỗ trợ mua sắm AI</span>
+          </div>
+        </div>
+
+        <div class="chatbox__actions">
+          <button type="button" class="chatbox__icon-btn" (click)="clearConversation()" aria-label="Làm mới cuộc trò chuyện">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="chatbox__icon-btn" (click)="toggleChat()" aria-label="Đóng chatbox">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <div #messageList class="chatbox__messages">
+        @for (message of messages; track message.id) {
+          <div 
+            class="chatbox__message-wrapper" 
+            [class.chatbox__message-wrapper--user]="message.role === 'user'"
+          >
+            @if (message.role === 'assistant') {
+              <div class="chatbox__msg-avatar">
+                <i class="fa fa-android" aria-hidden="true"></i>
+              </div>
+            }
+            
+            <article
+              class="chatbox__message"
+              [class.chatbox__message--user]="message.role === 'user'"
+              [class.chatbox__message--assistant]="message.role === 'assistant'"
+              [class.chatbox__message--error]="message.status === 'error'"
+            >
+              @if (message.content) {
+                <p>{{ message.content }}</p>
+              }
+              @if (message.status === 'streaming' && !message.content) {
+                <div class="chatbox__typing-indicator" aria-label="Đang trả lời">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              }
+            </article>
+          </div>
+        }
+      </div>
+
+      <form class="chatbox__composer" (ngSubmit)="sendMessage()">
+        <textarea
+          name="chatMessage"
+          [(ngModel)]="inputValue"
+          rows="1"
+          maxlength="500"
+          placeholder="Nhập câu hỏi cho trợ lý ảo..."
+          [disabled]="isSending"
+          aria-label="Nội dung câu hỏi"
+          (keydown.enter)="handleComposerKeydown($event)"
+        ></textarea>
+
+        @if (isSending) {
+          <button type="button" class="chatbox__send-btn chatbox__send-btn--stop" (click)="stopStreaming()" aria-label="Dừng phản hồi">
+            <i class="fa fa-stop" aria-hidden="true"></i>
+          </button>
+        } @else {
+          <button type="submit" class="chatbox__send-btn" [disabled]="!inputValue.trim()" aria-label="Gửi câu hỏi">
+            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        }
+      </form>
+    </div>
+  }
+
+  <button type="button" class="chatbox__launcher" (click)="toggleChat()" [attr.aria-expanded]="isOpen" aria-label="Mở chatbox">
+    <i class="fa fa-comments" aria-hidden="true"></i>
+  </button>
+</section>
+
